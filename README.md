@@ -2,6 +2,7 @@
 
 A demo that shows how a SCORM course can be played inside a page (**domain A**) while the actual SCORM content lives on a completely different domain (**domain B**), with the content streamed through an API reverse proxy. 
 
+## Business Scenario
 While this is not a new concept in the world of Scorm Delivery, the business scenario here was to update an existing legacy player that was running into constant hurdles handling different browser/device/os combinations, increasing security concerns around 3rd party cookies and iframes, and the business to handle scorm content being served from internal storage as well as external scorm content providers.
 
 This solution attempts to deal with the classic LMS integration problem: browsers block cross-origin DOM access, so a naive `<iframe>` with the content on another host cannot be driven by the LMS page. The demo solves it the same way a real LMS does — with a **nested iframe bridge** and a structured `window.postMessage` protocol.
