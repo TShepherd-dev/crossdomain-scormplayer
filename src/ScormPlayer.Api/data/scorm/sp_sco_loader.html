@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<!--
+    SP SCO Loader - TEMPLATE copy (served from /data/scorm/)
+
+    This is the loader "template" shipped in the repo. The copy that the demo
+    actually runs lives next to the course under data/assets/scorm/demo-course/
+    and is served through YARP; THIS copy is kept in sync so the two tell the
+    same story. Its job - host the SCORM API for a child iframe and bridge to
+    the hosting app via postMessage - is documented on that file too.
+
+    The ##ApiRootUrl## placeholder below is swapped for the API's own origin
+    at serve time (see ScormController.GetContentFile).
+-->
 <html>
 <head>
     <title>SP SCO Loader</title>
@@ -21,10 +33,19 @@
         <div class="label">SCORM content launched on domain:</div>
         <div class="value" id="domain-value"></div>
     </div>
+    <!-- The SCO's actual entry page loads in here; its src is set by
+         sp_sco_startup.js once USER_INIT_DATA arrives from the viewer. -->
     <iframe id="sp_sco"></iframe>
     <script>
         document.getElementById('domain-value').textContent = window.location.origin;
     </script>
+    <!--
+        The demo-course copy of this loader (served thru YARP) additionally
+        loads engine_slim.js + engine_12.js in script tags BEFORE this module;
+        engine_slim.js must be present for sp_sco_startup.js to work, so when
+        reusing this template from a server that does not inject those tags,
+        keep that load order.
+    -->
     <script type="module" src="##ApiRootUrl##/data/scorm/sp_sco_startup.js"></script>
 </body>
 </html>

@@ -1,4 +1,23 @@
 <!DOCTYPE html>
+<!--
+    SP SCO Loader (loader frame / middle iframe)
+
+    This page is the iframe the Vue viewer embeds. It exists to solve the
+    cross-origin problem:
+
+        Vue viewer (localhost:8080)
+            -> <iframe src=.../sp_sco_loader.html>   (this page, localhost:5001)
+                -> <iframe id="sp_sco">               (the actual SCO, same origin)
+
+    Because the actual course content must never touch the hosting app's
+    window directly (same-origin policy), the loader is the SAFE INTERMEDIARY
+    that owns the SCORM API (window.API / window.API_1484_11, set here by the
+    engine scripts) and talks to the app via window.postMessage.
+
+    The ##ApiRootUrl## placeholders below are swapped for the API's own origin
+    at serve time (see ScormController.GetContentFile) so the engine scripts
+    always resolve back to this API no matter what host served the loader.
+-->
 <html>
 <head>
     <title>SP SCO Loader</title>
@@ -21,10 +40,22 @@
         <div class="label">SCORM content launched on domain:</div>
         <div class="value" id="domain-value"></div>
     </div>
+    <!-- The SCO's actual entry page loads in here; its src is set by
+         sp_sco_startup.js once USER_INIT_DATA arrives from the viewer. -->
     <iframe id="sp_sco"></iframe>
     <script>
         document.getElementById('domain-value').textContent = window.location.origin;
     </script>
+    <!--
+        Load order matters:
+        1. engine_slim.js     - defines scormEngineClass (the orchestrator)
+        2. engine_12.js       - defines LMS_CirrusScorm1_2_API used as window.API
+        3. sp_sco_startup.js (module) - waits for USER_INIT_DATA, then builds
+           the engine and points the inner iframe at the real content.
+        All three are pulled from /data/scorm on THIS api (##ApiRootUrl##).
+        That cross-origin hop (8080 -> 5001) is the heart of the demo: the
+        engine lives "on the content side of the fence".
+    -->
     <script src="##ApiRootUrl##/data/scorm/engine_slim.js"></script>
     <script src="##ApiRootUrl##/data/scorm/engine_12.js"></script>
     <script type="module" src="##ApiRootUrl##/data/scorm/sp_sco_startup.js"></script>

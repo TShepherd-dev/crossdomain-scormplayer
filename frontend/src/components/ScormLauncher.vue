@@ -1,9 +1,22 @@
+<!--
+    ScormLauncher.vue - the landing page.
+
+    Pure metadata + a button: it fetches the launch info for the demo module
+    from the API and then opens the viewer in a NEW TAB via window.open.
+    Opening a new top-level browsing context is an intentional part of the
+    real-product flow (keeps the learner in their own UI), and here it also
+    gives the side-by-side "app domain vs content domain" demo.
+
+    Note: the info below arrives camelCased (moduleId, moduleName, ...) because
+    the API serializes DTOs with camelCase JSON - hence the camelCase property
+    reads in the template.
+-->
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const launchInfo = ref(null)
-const loading = ref(true)
-const error = ref(null)
+const launchInfo = ref(null)   // camelCase launch metadata from /api/scorm/launchInfo
+const loading = ref(true)      // spinner while launch info loads
+const error = ref(null)        // any fetch failure message
 
 onMounted(async () => {
   try {
@@ -16,6 +29,10 @@ onMounted(async () => {
   }
 })
 
+// Hands off to the viewer tab. Kept deliberately tiny: window.open must be
+// called synchronously inside the user gesture (browsers like Safari/Chrome
+// block it otherwise). The router takes it from here - the viewer reads
+// :moduleId from the URL.
 function launchSCORM() {
   if (!launchInfo.value) return
   const viewerUrl = `/scormViewer/${launchInfo.value.moduleId}`

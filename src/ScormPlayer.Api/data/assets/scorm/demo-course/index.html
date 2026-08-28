@@ -1,3 +1,17 @@
+<!--
+    Demo SCO (Sharable Content Object) - a tiny 3-question quiz.
+
+    This page is the "course". It lives at the bottom of the iframe stack:
+    viewer (8080) -> loader (5001) -> this page (5001). It is deliberately
+    SCORM-ignorant of the surrounding machinery: per the SCORM 1.2 spec it
+    only has to find an object named "API" and call LMSInitialize / LMSGetValue
+    / LMSSetValue / LMSCommit / LMSFinish against it. The API object actually
+    lives in the loader frame (set up by engine_12.js), found here by walking
+    the parent chain.
+
+    The quiz grades against imsmanifest.xml's adlcp:masteryscore of 80: 2+ of
+    3 correct (>= 80%) sets lesson_status to "passed".
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,6 +96,9 @@
             var correctAnswers = { q1: "correct", q2: "correct", q3: "correct" };
             var totalQuestions = 3;
 
+            // SCORM API discovery: look in this window, then walk up the
+            // iframe chain. The loader frame two levels up exposes window.API
+            // (installed by engine_12.js).
             function getAPI() {
                 if (window.API) return window.API;
                 if (window.parent && window.parent.API) return window.parent.API;
@@ -89,6 +106,9 @@
                 return null;
             }
 
+            // The engine's API may not be attached yet on first load (the
+            // loader only mounts it after the viewer posts USER_INIT_DATA), so
+            // poll every 100ms until the handshake has completed.
             function waitForAPI(callback) {
                 api = getAPI();
                 if (api) {
@@ -98,6 +118,9 @@
                 }
             }
 
+            // Session bootstrap: standard 1.2 lifecycle - Initialize, seed a
+            // few cmi values (progress = incomplete), and an early Commit so
+            // the course start is observable on the API side.
             waitForAPI(function (api) {
                 var initResult = api.LMSInitialize("");
                 if (initResult === "true") {
@@ -122,6 +145,9 @@
                 });
             });
 
+            // Grading: report score + pass/fail through the SCORM data model. The
+            // engine's computeScore() later turns these cmi.core.* values into
+            // the completion outcome that triggers markComplete on the API.
             document.getElementById('btnSubmit').addEventListener('click', function () {
                 var correct = 0;
                 var questions = ['q1', 'q2', 'q3'];
@@ -134,6 +160,8 @@
                 });
 
                 var scoreRaw = Math.round((correct / totalQuestions) * 100);
+                // Mastery threshold is 80 (see adlcp:masteryscore in
+                // imsmanifest.xml) - 2+ out of 3 correct is a pass.
                 var lessonStatus = scoreRaw >= 80 ? "passed" : "failed";
 
                 if (api) {
@@ -159,6 +187,9 @@
                 document.getElementById('btnComplete').disabled = false;
             });
 
+            // Finishing the course: LMSFinish drives the engine's full teardown (final
+            // score computation, markComplete if the outcome changed, server
+            // terminate) - the proper way to end a SCORM session.
             document.getElementById('btnComplete').addEventListener('click', function () {
                 if (api) {
                     api.LMSFinish("");

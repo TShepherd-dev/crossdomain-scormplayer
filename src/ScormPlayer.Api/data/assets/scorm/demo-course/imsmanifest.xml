@@ -1,4 +1,20 @@
 <?xml version="1.0" standalone="no"?>
+<!--
+    SCORM 1.2 package manifest for the demo course.
+
+    This is the piece a real LMS uses to ingest a package: it declares the
+    package is SCORM 1.2 (schema/schemaversion), describes the course
+    structure (organizations/items) and points at the launch file. Here the
+    structure is the simplest possible: one organization, one item, one SCO
+    whose entry point is index.html.
+
+    adlcp:masteryscore (80) is the pass mark both the course grading and the
+    engine's computeScore logic honour.
+
+    NOTE: for the demo the API does not parse this file - the loader URL chain
+    is hard-wired to sp_sco_loader.html -> index.html. The manifest exists so
+    the demo-course folder is a genuinely valid SCORM package.
+-->
 <manifest identifier="com.demo.scorm-course"
     version="1"
     xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
