@@ -7,12 +7,14 @@ namespace ScormPlayer.Api.Controllers;
 // -----------------------------------------------------------------------------
 // Simulated LMS backend for the SCORM runtime loop.
 //
-// This controller is the "other side" of the SCORM handshake. The in-browser
+// This controller is the "other side"/LMS of the SCORM handshake. The in-browser
 // engine (engine_slim.js, running inside sp_sco_loader.html) calls these
 // endpoints to initialise a session, write/read cmi.* values, commit, mark
-// the module complete and terminate. In the real AcademyPoint product this
-// logic lives inside ContentService backed by a DB + full user context; here
-// sessions live in static in-memory dictionaries and there is no
+// the module complete and terminate.
+//
+// In the real system, these controllers would be writing data to a database and/or running
+// actual business logic to deal with the parts of the SCORM Protocol that are the responsibility of the LMS
+// of the LMS; here sessions live in static in-memory dictionaries and there is no
 // authentication (the engine's bearer token is a fixed demo value).
 // -----------------------------------------------------------------------------
 [ApiController]

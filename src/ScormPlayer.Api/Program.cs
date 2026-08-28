@@ -58,7 +58,7 @@ builder.Services.AddCors(options =>
 // -----------------------------------------------------------------------------
 // YARP reverse-proxy configuration (built in-memory rather than in
 // appsettings.json so the cluster destination can carry a fully absolute URL
-// for this API instance - the same trick the real AcademyPoint product uses).
+// for this API instance).
 // -----------------------------------------------------------------------------
 var apiBaseUrl = "https://localhost:5001";                 // this API
 var scormContentPath = "/cdn/asset/scorm/getContentFile/"; // its file-serving action

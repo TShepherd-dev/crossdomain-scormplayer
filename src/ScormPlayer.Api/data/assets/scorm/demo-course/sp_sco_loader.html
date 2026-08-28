@@ -49,7 +49,7 @@
     <!--
         Load order matters:
         1. engine_slim.js     - defines scormEngineClass (the orchestrator)
-        2. engine_12.js       - defines LMS_CirrusScorm1_2_API used as window.API
+        2. engine_12.js       - defines LMS_PlayerScorm1_2_API used as window.API
         3. sp_sco_startup.js (module) - waits for USER_INIT_DATA, then builds
            the engine and points the inner iframe at the real content.
         All three are pulled from /data/scorm on THIS api (##ApiRootUrl##).

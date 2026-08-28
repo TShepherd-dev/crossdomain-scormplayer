@@ -13,9 +13,9 @@
 // In the real product this is engine_12.js from AP-CoreDlls; here it is a
 // trimmed re-implementation for the demo.
 // -----------------------------------------------------------------------------
-function LMS_CirrusScorm1_2_API(caller) {
+function LMS_PlayerScorm1_2_API(caller) {
     var self = this;
-    self.SCORMDataModel = caller.oCirrusSCORM;      // the launch envelope
+    self.SCORMDataModel = caller.oPlayerSCORM;      // the launch envelope
     self.SCORMMessageWindow = caller;               // the engine (owns comms)
     self.state = window.SCORM_STATE.NOT_INITIALIZED;
     self.errorCode = "0";

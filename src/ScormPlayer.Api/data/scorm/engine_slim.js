@@ -16,8 +16,6 @@
 //   - keep the cmi.* data model in memory (CurrentDataItems)
 //   - compute pass/fail and score, and drive commit / markComplete / terminate
 //
-// This is a trimmed re-implementation of the AcademyPoint 6.5.x engine
-// (engine_slim.js) to keep the demo self-contained.
 // -----------------------------------------------------------------------------
 
 // The two SCORM global slots. Only one is populated, depending on version.
@@ -48,7 +46,7 @@ var ACTIVITY_STATE = {
 // can call unloadHandler() during window teardown.
 function scormEngineClass(cmiData, userId) {
     var self = this;
-    self.oCirrusSCORM = cmiData;          // the USER_INIT_DATA payload
+    self.oPlayerSCORM = cmiData;          // the USER_INIT_DATA payload
     self.userId = userId;                 // also used as the "session id"
     self.CurrentDataItems = [];           // in-memory cmi.* data model
     self.ApiState = "notInitialized";     // engine-level state
@@ -79,10 +77,10 @@ function scormEngineClass(cmiData, userId) {
     self.initDataModel = function () {
         switch (self.ScormVersion) {
             case "12":
-                window.API = new LMS_CirrusScorm1_2_API(self);
+                window.API = new LMS_PlayerScorm1_2_API(self);
                 break;
             case "2004":
-                window.API_1484_11 = new LMS_CirrusScorm2004_API(self);
+                window.API_1484_11 = new LMS_PlayerScorm2004_API(self);
                 break;
         }
         self.ApiState = "ready";
@@ -140,7 +138,7 @@ function scormEngineClass(cmiData, userId) {
         await scormPost(url, { sessionId: self.userId }, token);
     };
 
-    // Turn the current cmi data model into the three "cirrus.*" virtual values
+    // Turn the current cmi data model into the three "Player.*" virtual values
     // that drive completion: success status, completion status and scaled
     // score. Called on every Commit and Terminate.
     //
@@ -191,9 +189,9 @@ function scormEngineClass(cmiData, userId) {
             }
         }
 
-        self.setDATA("cirrus.success_status", successStatus);
-        self.setDATA("cirrus.completion_status", completionStatus);
-        self.setDATA("cirrus.score_scaled", scoreScaled.toString());
+        self.setDATA("Player.success_status", successStatus);
+        self.setDATA("Player.completion_status", completionStatus);
+        self.setDATA("Player.score_scaled", scoreScaled.toString());
 
         return { successStatus, completionStatus, scoreScaled };
     };
@@ -245,7 +243,7 @@ function scormEngineClass(cmiData, userId) {
         var baseUrl = settings.VUE_APP_API_URL || settings.apiUrl || "";
         var url = baseUrl + "/api/module/markComplete";
         await scormPost(url, {
-            moduleId: self.oCirrusSCORM.ModuleId || self.oCirrusSCORM.moduleId || "",
+            moduleId: self.oPlayerSCORM.ModuleId || self.oPlayerSCORM.moduleId || "",
             successStatus: result.successStatus,
             completionStatus: result.completionStatus,
             scoreScaled: result.scoreScaled
