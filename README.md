@@ -68,6 +68,7 @@ cd frontend
 npm install
 npm run dev
 ```
+There is a `startApp.bat` in the root folder that will start both projects and launches the browser.
 
 Open `http://localhost:8080`, click **Launch SCORM Course**, then submit the quiz. The header badges show the two domains at play, and the score/lesson status are persisted to the API through the SCORM engine via the iframe bridge.
 
