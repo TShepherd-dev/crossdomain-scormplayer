@@ -17,6 +17,13 @@ using Yarp.ReverseProxy.Configuration;
 //
 // Everything is demo/in-memory: no database, no auth, no persistence across
 // restarts.
+//
+// NOTE - the serving of SCORM content files "thru" the API is initially done as a security measure:
+// the normal API/role-based security so combined with the YARP rewriting, this is enough to 
+// hides and prevent scorm source content from being accessed directly.
+// 
+// In a real system, the actual delivery of the content would be passed off to a CDN service.
+//
 // -----------------------------------------------------------------------------
 
 var builder = WebApplication.CreateBuilder(args);

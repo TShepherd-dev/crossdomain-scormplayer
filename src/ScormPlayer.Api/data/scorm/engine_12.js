@@ -10,8 +10,6 @@
 // in as `caller`) which owns the data model + server comms, so this wrapper
 // only does SCORM-spec string handling and state checks.
 //
-// In the real product this is engine_12.js from AP-CoreDlls; here it is a
-// trimmed re-implementation for the demo.
 // -----------------------------------------------------------------------------
 function LMS_PlayerScorm1_2_API(caller) {
     var self = this;
