@@ -68,7 +68,7 @@ function launchSCORM() {
 │  │  ScormLauncher.vue  ──[window.open]──▶         │  │
 │  │  ScormViewer.vue    ──[iframe src]──▶           │  │
 │  │                   ┌─────────────────────────┐  │  │
-│  │                   │ ap_sco_loader.html       │  │  │
+│  │                   │ sp_sco_loader.html       │  │  │
 │  │                   │ (YARP → /cdn/asset/...)  │  │  │
 │  │                   │  ┌───────────────────┐   │  │  │
 │  │                   │  │ index.html (SCO)  │   │  │  │

@@ -59,7 +59,7 @@ public class ScormController : ControllerBase
         {
             ModuleId = moduleId,
             ModuleName = "Demo SCORM Course",
-            ScormUrl = $"/assets/scorm/disk/demo-course/ap_sco_loader.html",
+            ScormUrl = $"/assets/scorm/disk/demo-course/sp_sco_loader.html",
             ScormVersion = "12",
             IsCompleted = false
         });
@@ -175,7 +175,7 @@ public class ScormController : ControllerBase
         return Ok(new
         {
             AssetCode = "demo-course",
-            LoaderUrl = "/assets/scorm/disk/demo-course/ap_sco_loader.html",
+            LoaderUrl = "/assets/scorm/disk/demo-course/sp_sco_loader.html",
             LaunchUrl = "/assets/scorm/disk/demo-course/index.html",
             ModuleId = "demo-001",
             ModuleName = "Demo SCORM Course",

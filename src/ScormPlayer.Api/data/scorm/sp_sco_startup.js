@@ -9,9 +9,9 @@ window.addEventListener('message', function (event) {
     var contentLaunchUrl = msg.msgdata.contentLaunchUrl;
     var launchDetails = cmiDataFromApUiWindow.LaunchDetails || cmiDataFromApUiWindow.launchDetails;
 
-    window.__academySettings = msg.msgdata.envSettings || {};
+    window.__scormplayerSettings = msg.msgdata.envSettings || {};
 
     window.scormEngineMain = new scormEngineClass(cmiDataFromApUiWindow, userId);
 
-    document.getElementById('ap_sco').src = contentLaunchUrl;
+    document.getElementById('sp_sco').src = contentLaunchUrl;
 });

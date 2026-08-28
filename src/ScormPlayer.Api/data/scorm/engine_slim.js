@@ -56,7 +56,7 @@ function scormEngineClass(cmiData, userId) {
 
     self.GetSCORMValue = async function (sParameter) {
         var token = await self.getToken();
-        var settings = window.__academySettings;
+        var settings = window.__scormplayerSettings;
         var baseUrl = settings.VUE_APP_API_URL || settings.apiUrl || "";
         var url = baseUrl + "/api/scormModule/getValue/" + self.userId + "/" + encodeURIComponent(sParameter);
         try {
@@ -69,7 +69,7 @@ function scormEngineClass(cmiData, userId) {
 
     self.SendSCORMSetValues = async function (dataItem) {
         var token = await self.getToken();
-        var settings = window.__academySettings;
+        var settings = window.__scormplayerSettings;
         var baseUrl = settings.VUE_APP_API_URL || settings.apiUrl || "";
         var url = baseUrl + "/api/scormModule/setValue";
         var body = {
@@ -82,7 +82,7 @@ function scormEngineClass(cmiData, userId) {
 
     self.SendSCORMCommit = async function () {
         var token = await self.getToken();
-        var settings = window.__academySettings;
+        var settings = window.__scormplayerSettings;
         var baseUrl = settings.VUE_APP_API_URL || settings.apiUrl || "";
         var url = baseUrl + "/api/scormModule/commitSession";
         var dirtyItems = self.CurrentDataItems.filter(function (i) { return i.IsDirty; });
@@ -178,7 +178,7 @@ function scormEngineClass(cmiData, userId) {
         };
 
         var token = await self.getToken();
-        var settings = window.__academySettings;
+        var settings = window.__scormplayerSettings;
         var baseUrl = settings.VUE_APP_API_URL || settings.apiUrl || "";
         var url = baseUrl + "/api/module/markComplete";
         await scormPost(url, {
@@ -193,7 +193,7 @@ function scormEngineClass(cmiData, userId) {
         self.computeScore();
         await self.SendMarkCompleteRequest();
         var token = await self.getToken();
-        var settings = window.__academySettings;
+        var settings = window.__scormplayerSettings;
         var baseUrl = settings.VUE_APP_API_URL || settings.apiUrl || "";
         var url = baseUrl + "/api/scormModule/terminateUserSession";
         await scormPost(url, { sessionId: self.userId }, token);

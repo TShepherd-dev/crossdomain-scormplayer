@@ -24,7 +24,7 @@ onMounted(async () => {
     const parts = scormUrl.split('/').filter(Boolean)
     const assetCode = parts.length >= 2 ? parts[parts.length - 2] : 'demo-course'
 
-    scormLoaderUrl.value = `${API_BASE}/assets/scorm/disk/${assetCode}/ap_sco_loader.html`
+    scormLoaderUrl.value = `${API_BASE}/assets/scorm/disk/${assetCode}/sp_sco_loader.html`
     iframeOrigin.value = new URL(scormLoaderUrl.value).origin
 
     isIframeReady.value = true

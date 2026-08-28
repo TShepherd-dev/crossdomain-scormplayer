@@ -18,16 +18,16 @@ Domain A: Vue SPA (http://localhost:8080)
 │
 │  ScormViewer.vue  ── window.open() ──>  /scormViewer/:moduleId
 │
-│  <iframe src="https://localhost:5001/assets/scorm/disk/demo-course/ap_sco_loader.html">
+│  <iframe src="https://localhost:5001/assets/scorm/disk/demo-course/sp_sco_loader.html">
 │
 Domain B: .NET 10 API + YARP (https://localhost:5001)
 │
 │  YARP route: /assets/scorm/disk/{assetCode}/{**filepath}
 │      └─ PathRemovePrefix ──> /cdn/asset/scorm/getContentFile/{assetCode}/{filepath}
 │
-│  ap_sco_loader.html ──> loads engine_slim.js + engine_12.js
+│  sp_sco_loader.html ──> loads engine_slim.js + engine_12.js
 │
-│  <iframe id="ap_sco" src="...index.html">   (the actual SCORM content)
+│  <iframe id="sp_sco" src="...index.html">   (the actual SCORM content)
 ```
 
 ### Cross-domain bridge (`postMessage`)
