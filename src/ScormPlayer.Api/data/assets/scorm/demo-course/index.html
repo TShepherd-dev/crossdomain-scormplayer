@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo SCORM Course</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f4f8; color: #1a202c; }
+        .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #2b6cb0, #4299e1); color: white; padding: 32px; }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { opacity: 0.9; font-size: 14px; }
+        .body { padding: 32px; }
+        .question { margin-bottom: 28px; }
+        .question h3 { font-size: 16px; margin-bottom: 12px; color: #2d3748; }
+        .options label { display: block; padding: 10px 14px; margin: 6px 0; border-radius: 8px; cursor: pointer; transition: background 0.15s; border: 2px solid transparent; }
+        .options label:hover { background: #ebf8ff; }
+        .options input[type="radio"] { margin-right: 10px; }
+        .options input[type="radio"]:checked + span { font-weight: 600; }
+        .btn-row { display: flex; gap: 12px; margin-top: 24px; }
+        .btn { padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+        .btn-primary { background: #2b6cb0; color: white; }
+        .btn-primary:hover { background: #2c5282; }
+        .btn-success { background: #38a169; color: white; }
+        .btn-success:hover { background: #2f855a; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result { margin-top: 20px; padding: 16px; border-radius: 8px; font-weight: 600; display: none; }
+        .result.pass { background: #c6f6d5; color: #276749; }
+        .result.fail { background: #fed7d7; color: #9b2c2c; }
+        .score-display { margin-top: 16px; font-size: 14px; color: #718096; }
+        .status-bar { padding: 16px 32px; background: #edf2f7; font-size: 13px; color: #4a5568; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Demo SCORM Course</h1>
+            <p>Cross-Domain SCORM Player Test - SCORM 1.2</p>
+        </div>
+        <div class="body">
+            <div class="question" id="q1">
+                <h3>1. What does SCORM stand for?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="wrong"><span>Standard Content Object Reference Model</span></label>
+                    <label><input type="radio" name="q1" value="correct"><span>Sharable Content Object Reference Model</span></label>
+                    <label><input type="radio" name="q1" value="wrong"><span>Structured Course Object Resource Module</span></label>
+                </div>
+            </div>
+            <div class="question" id="q2">
+                <h3>2. What is the minimum number of files in a valid SCORM 1.2 package?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="wrong"><span>1</span></label>
+                    <label><input type="radio" name="q2" value="correct"><span>2</span></label>
+                    <label><input type="radio" name="q2" value="wrong"><span>3</span></label>
+                </div>
+            </div>
+            <div class="question" id="q3">
+                <h3>3. Which SCORM API object is used for SCORM 1.2?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="correct"><span>window.API</span></label>
+                    <label><input type="radio" name="q3" value="wrong"><span>window.API_1484_11</span></label>
+                    <label><input type="radio" name="q3" value="wrong"><span>window.LMS</span></label>
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" id="btnSubmit" disabled>Submit Answers</button>
+                <button class="btn btn-success" id="btnComplete" disabled>Complete Course</button>
+            </div>
+            <div class="result" id="result"></div>
+            <div class="score-display" id="scoreDisplay"></div>
+        </div>
+        <div class="status-bar">
+            <span id="status">Status: Not Started</span>
+            <span id="score">Score: --</span>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var api = null;
+            var correctAnswers = { q1: "correct", q2: "correct", q3: "correct" };
+            var totalQuestions = 3;
+
+            function getAPI() {
+                if (window.API) return window.API;
+                if (window.parent && window.parent.API) return window.parent.API;
+                if (window.parent && window.parent.parent && window.parent.parent.API) return window.parent.parent.API;
+                return null;
+            }
+
+            function waitForAPI(callback) {
+                api = getAPI();
+                if (api) {
+                    callback(api);
+                } else {
+                    setTimeout(function () { waitForAPI(callback); }, 100);
+                }
+            }
+
+            waitForAPI(function (api) {
+                var initResult = api.LMSInitialize("");
+                if (initResult === "true") {
+                    document.getElementById("status").textContent = "Status: Initialized";
+                    api.LMSSetValue("cmi.core.lesson_status", "incomplete");
+                    api.LMSSetValue("cmi.student_name", "Demo User");
+                    api.LMSSetValue("cmi.student_id", "demo-user-001");
+                    api.LMSCommit("");
+                }
+            });
+
+            var answered = 0;
+            document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    var allAnswered = true;
+                    ['q1', 'q2', 'q3'].forEach(function (q) {
+                        if (!document.querySelector('input[name="' + q + '"]:checked')) {
+                            allAnswered = false;
+                        }
+                    });
+                    document.getElementById('btnSubmit').disabled = !allAnswered;
+                });
+            });
+
+            document.getElementById('btnSubmit').addEventListener('click', function () {
+                var correct = 0;
+                var questions = ['q1', 'q2', 'q3'];
+
+                questions.forEach(function (q, idx) {
+                    var selected = document.querySelector('input[name="' + q + '"]:checked');
+                    if (selected && selected.value === correctAnswers[q]) {
+                        correct++;
+                    }
+                });
+
+                var scoreRaw = Math.round((correct / totalQuestions) * 100);
+                var lessonStatus = scoreRaw >= 80 ? "passed" : "failed";
+
+                if (api) {
+                    api.LMSSetValue("cmi.core.score.raw", scoreRaw.toString());
+                    api.LMSSetValue("cmi.core.score.max", "100");
+                    api.LMSSetValue("cmi.core.lesson_status", lessonStatus);
+                    api.LMSCommit("");
+                }
+
+                var resultEl = document.getElementById('result');
+                resultEl.style.display = 'block';
+                if (lessonStatus === "passed") {
+                    resultEl.className = 'result pass';
+                    resultEl.textContent = 'Congratulations! You scored ' + scoreRaw + '% and passed.';
+                } else {
+                    resultEl.className = 'result fail';
+                    resultEl.textContent = 'You scored ' + scoreRaw + '%. A score of 80% is required to pass.';
+                }
+
+                document.getElementById('score').textContent = 'Score: ' + scoreRaw + '/100';
+                document.getElementById('scoreDisplay').textContent = 'Your score: ' + scoreRaw + '% (' + correct + '/' + totalQuestions + ' correct)';
+                document.getElementById('btnSubmit').disabled = true;
+                document.getElementById('btnComplete').disabled = false;
+            });
+
+            document.getElementById('btnComplete').addEventListener('click', function () {
+                if (api) {
+                    api.LMSFinish("");
+                }
+                document.getElementById('status').textContent = "Status: Completed";
+                document.getElementById('btnComplete').disabled = true;
+            });
+        })();
+    </script>
+</body>
+</html>
