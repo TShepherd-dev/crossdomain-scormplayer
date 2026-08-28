@@ -1,14 +1,16 @@
 # Cross-Domain SCORM Content Player
 
-A demo that shows how a SCORM course can be played inside a page (**domain A**) while the actual SCORM content lives on a completely different domain (**domain B**), with the content streamed through an API reverse proxy.
+A demo that shows how a SCORM course can be played inside a page (**domain A**) while the actual SCORM content lives on a completely different domain (**domain B**), with the content streamed through an API reverse proxy. 
 
-This is the classic LMS integration problem: browsers block cross-origin DOM access, so a naive iframe with the content on another host cannot be driven by the LMS page. The demo solves it the same way a real LMS does — with a **nested iframe bridge** and a structured `window.postMessage` protocol.
+While this is not a new concept in the world of Scorm Delivery, the business scenario here was to update an existing legacy player that was running into constant hurdles handling different browser/device/os combinations, increasing security concerns around 3rd party cookies and iframes, and the business to handle scorm content being served from internal storage as well as external scorm content providers.
+
+This solution attempts to deal with the classic LMS integration problem: browsers block cross-origin DOM access, so a naive `<iframe>` with the content on another host cannot be driven by the LMS page. The demo solves it the same way a real LMS does — with a **nested iframe bridge** and a structured `window.postMessage` protocol.
 
 ## What it demonstrates
 
 - **Two browser domains** on screen at once: the app served by Vite (`http://localhost:8080`) and the SCORM content served through the API (`https://localhost:5001`). Domain badges in the player header make the split visible.
-- **SCORM content proxied "thru" the API** with YARP: the browser asks the API for `/assets/scorm/disk/{assetCode}/...` and YARP rewrites and forwards that to the API's own content endpoint. The content never comes from localhost:8080.
-- **A working SCORM runtime** (1.2 and 2004 API implementations) — `window.API` / `window.API_1484_11` conforming wrappers that persist `cmi.*` data items, compute scores, and drive the `Initialize → Run → Commit → Terminate` lifecycle.
+- **SCORM content proxied "thru" the API** with YARP: the browser asks the API for `/assets/scorm/disk/{assetCode}/...` and YARP rewrites and forwards that to the API's own content endpoint. The content never comes from the frontend's domain: localhost:8080.
+- **A working SCORM runtime** (1.2 and 2004 API implementations) — `window.API` / `window.API_1484_11` conforming wrappers that persist `cmi.*` data items, compute scores, and drive the `Initialize → Run → Commit → Terminate` SCORM lifecycle.
 - **A real, minimal SCORM 1.2 package** (imsmanifest.xml + a 3-question quiz) that talks to the player through the standard SCORM API.
 
 ## Architecture
@@ -66,6 +68,7 @@ cd frontend
 npm install
 npm run dev
 ```
+There is a `startApp.bat` in the root folder that will start both projects and launches the browser.
 
 Open `http://localhost:8080`, click **Launch SCORM Course**, then submit the quiz. The header badges show the two domains at play, and the score/lesson status are persisted to the API through the SCORM engine via the iframe bridge.
 
